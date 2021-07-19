@@ -2,5 +2,5 @@ package com.mafia.game.utils;
 
 public class Constants
 {
-    public static  final float pixelPerMeters = 20f;
+    public static  final float pixelPerMeters = 64f;
 }
