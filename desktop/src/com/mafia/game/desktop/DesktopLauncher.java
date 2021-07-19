@@ -1,16 +1,12 @@
-package com.mygdx.game.desktop;
+package com.mafia.game.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.mygdx.game.Main;
+import com.mafia.game.Main;
 
-public class DesktopLauncher
-{
-	public static void main (String[] arg)
-	{
+public class DesktopLauncher {
+	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		//config.width = Gdx.graphics.getWidth();
-		//config.height = Gdx.graphics.getHeight();
 		new LwjglApplication(new Main(), config);
 	}
 }
