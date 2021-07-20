@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -31,11 +32,14 @@ public class PlayScreen implements Screen
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
 
-    private SensorCreate sensorCreate;
+    private SensorCreate footSensor, doorSensor;
     private GameContactListener gameContactListener;
+    private TextureAtlas atlas;
 
     public PlayScreen(final Main main)
     {
+
+        atlas = new TextureAtlas("Player_Animations.pack");
 
         this.main = main;
 
@@ -49,11 +53,48 @@ public class PlayScreen implements Screen
         box2DDebugRenderer = new Box2DDebugRenderer();
 
 
-        player = new Player(world, 0,120,64,64, "Player", this);
-        sensorCreate = new SensorCreate(0, -29, 31, 5, "foot", player.body);
-        PlatformCreate platform = new PlatformCreate (world,0, 70, 500, 20, "Platform" );
+        player = new Player(world, 0,120,15,22, "Player", this);
+        footSensor = new SensorCreate(0, -10, 7, 1, "foot", player.body);
+
+        PlatformCreate platform = new PlatformCreate (world,0, 50, 100, 10, "Platform" );
+        doorSensor = new SensorCreate(2, 16, 7, 10, "door_1", platform.getBody());
 
 
+    }
+
+    public TextureAtlas getAtlas() {return atlas;}
+
+    public void doorUpdate()
+    {
+        if(gameContactListener.isPlayerTouchDoor_1() & Gdx.input.isKeyJustPressed((Input.Keys.E)))
+        {
+            System.out.println("chuj zopa ");
+            main.setScreen(new Location_1(this));
+        }
+    }
+
+    public Viewport getGamePort() {
+        return gamePort;
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
+
+    public Main getMain() {
+        return main;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public Box2DDebugRenderer getBox2DDebugRenderer() {
+        return box2DDebugRenderer;
     }
 
     @Override
@@ -92,6 +133,7 @@ public class PlayScreen implements Screen
         //camera.position.x = 0;
 
         handleInput(delta);
+        doorUpdate();
 
         world.step(1/60f, 6,2);
 
@@ -111,6 +153,9 @@ public class PlayScreen implements Screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         main.batch.setProjectionMatrix(camera.combined);
+        main.batch.begin();
+        player.draw(main.batch);
+        main.batch.end();
         box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
 
     }

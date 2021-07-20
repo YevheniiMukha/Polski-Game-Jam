@@ -41,4 +41,6 @@ public class PlatformCreate
        // return body;
     }
 
+    public Body getBody() {return body;}
+
 }

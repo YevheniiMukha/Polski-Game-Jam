@@ -33,7 +33,7 @@ public class Player extends Sprite
 
     public Player(World world, int x, int y, int width, int height, String name, PlayScreen screen)
     {
-        //super(screen.getAtlas().findRegion("player_assets"));
+        super(screen.getAtlas().findRegion("player_assets"));
         this.world = world;
 
         currentState = State.STANDING;
@@ -41,25 +41,25 @@ public class Player extends Sprite
         stateTimer = 0;
         runningRight = true;
 
-        /*Array<TextureRegion> frames = new Array<TextureRegion>();
+        Array<TextureRegion> frames = new Array<TextureRegion>();
 
         for(int i = 0; i < 2; i++)
         {
-            frames.add(new TextureRegion(getTexture(), i * 15, 0, 14,12));
+            frames.add(new TextureRegion(getTexture(), i * 21, 0, 20,24));
 
         }
-        playerStand = new Animation(0.1f, frames);
+        playerStand = new Animation(0.2f, frames);
         frames.clear();
 
-        for(int i = 0; i < 8; i++)
+        for(int i = 0; i < 4; i++)
         {
-            frames.add(new TextureRegion(getTexture(), i * 15, 44, 14,14));
+            frames.add(new TextureRegion(getTexture(), i * 21, 31, 20,24));
 
         }
         playerRun = new Animation(0.1f, frames);
         frames.clear();
 
-        for(int i = 0; i < 3; i++)
+        /*for(int i = 0; i < 3; i++)
         {
             frames.add(new TextureRegion(getTexture(), i * 15, 16, 14,12));
         }
@@ -71,23 +71,23 @@ public class Player extends Sprite
             frames.add(new TextureRegion(getTexture(), i * 15, 29, 14,14));
         }
         playerFalling = new Animation(0.1f, frames);
-        frames.clear();*/
-
+        frames.clear();
+        */
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.name = name;
         definePlayer();
-        // playerStand = new TextureRegion(getTexture(), 3, 68, 13,13);
-        setBounds(0, 0, 64  , 64);
+        //playerStand = new TextureRegion(getTexture(), 3, 68, 13,13);
+        setBounds(0, 0, 20  , 24);
         //setRegion((TextureRegion) playerStand.getKeyFrame(stateTimer, true));
     }
 
     public void update(float delta)
     {
         setPosition(body.getPosition().x * Constants.pixelPerMeters - (getRegionWidth() / 2f), body.getPosition().y * Constants.pixelPerMeters - (getRegionHeight() / 2f));
-        //setRegion(getFrame(delta));
+        setRegion(getFrame(delta));
     }
 
 
@@ -98,16 +98,17 @@ public class Player extends Sprite
         switch(currentState)
         {
             case JUMPING:
-                region = (TextureRegion) playerJump.getKeyFrame(stateTimer, true);
+                region = (TextureRegion) playerStand.getKeyFrame(stateTimer, true);
                 break;
             case RUNNING:
                 region = (TextureRegion) playerRun.getKeyFrame(stateTimer, true);
                 break;
             case FALLING:
-                region = (TextureRegion) playerFalling.getKeyFrame(stateTimer, true);
+                region = (TextureRegion) playerStand.getKeyFrame(stateTimer, true);
                 break;
             case STANDING:
                 region = (TextureRegion) playerStand.getKeyFrame(stateTimer, true);
+                break;
             case ATTACKS:
                 break;
 

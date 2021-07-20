@@ -9,8 +9,8 @@ import com.mafia.game.screens.PlayScreen;
 
 public class Main extends Game {
 	public SpriteBatch batch;
-	public static final int V_WIDTH = 1920;
-	public static final int V_HEIGHT = 1080;
+	public static final int V_WIDTH = 300;
+	public static final int V_HEIGHT = 150;
 
 
 

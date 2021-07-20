@@ -1,0 +1,12 @@
+
+Player_Animations.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+player_assets
+  rotate: false
+  xy: 1, 1
+  size: 120, 100
+  orig: 120, 100
+  offset: 0, 0
+  index: -1
