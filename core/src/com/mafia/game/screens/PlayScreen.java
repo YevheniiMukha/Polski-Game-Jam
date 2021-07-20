@@ -56,6 +56,7 @@ public class PlayScreen implements Screen
         camera = new OrthographicCamera();
         gamePort = new FitViewport(Main.V_WIDTH, Main.V_HEIGHT, camera);
 
+
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("TestGround.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
@@ -71,7 +72,7 @@ public class PlayScreen implements Screen
         footSensor = new SensorCreate(0, -10, 6, 1, "foot", player.body);
 
         //PlatformCreate platform = new PlatformCreate (world,0, 20, 100, 10, "Platform" );
-       // doorSensor = new SensorCreate(2, 16, 7, 10, "door_1", platform.getBody());
+        //doorSensor = new SensorCreate(2, 16, 7, 10, "door_1",  getBody());
 
         MapShapeBuilder.buildShapes(map.getLayers().get("Object").getObjects(), world);
 
@@ -157,10 +158,13 @@ public class PlayScreen implements Screen
 
         renderer.render();
 
+
         main.batch.setProjectionMatrix(camera.combined);
+
         main.batch.begin();
         player.draw(main.batch);
         main.batch.end();
+
         rayhandler.render();
         //box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
 
