@@ -46,6 +46,7 @@ public class Location_1 implements Screen
         //this.player = player;
 
         player = new Player(world, 0,120,15,22, "Player_2", playScreen);
+        SensorCreate footSensor = new SensorCreate(0, -10, 7, 1, "foot", player.body);
         box2DDebugRenderer = new Box2DDebugRenderer();
 
         PlatformCreate platform = new PlatformCreate (world,0, 50, 100, 10, "Platform" );
@@ -85,9 +86,9 @@ public class Location_1 implements Screen
 
     public void doorUpdate()
     {
-        if(gameContactListener.isPlayerTouchDoor_1_out() & Gdx.input.isKeyJustPressed((Input.Keys.E)))
+        if(gameContactListener.isPlayerTouchDoor_1_out() && Gdx.input.isKeyJustPressed((Input.Keys.E)))
         {
-            System.out.println("chuj zopa ");
+            //System.out.println("chuj zopa ");
             playScreen.getMain().setScreen(playScreen);
         }
     }

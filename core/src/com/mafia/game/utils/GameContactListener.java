@@ -6,8 +6,8 @@ public class GameContactListener implements ContactListener
 {
 
     private boolean playerOnGround = true;
-    private boolean door_1 = true;
-    private boolean door_1_out = true;
+    private boolean door_1 = false;
+    private boolean door_1_out = false;
 
 
 

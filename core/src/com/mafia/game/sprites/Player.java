@@ -1,5 +1,7 @@
 package com.mafia.game.sprites;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,7 +15,7 @@ import com.mafia.game.utils.Constants;
 
 public class Player extends Sprite
 {
-    public enum State {FALLING, JUMPING, STANDING, RUNNING, ATTACKS};
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, ATTACKS, SHOOT_RUN, SHOOT_STAY};
     public State currentState;
     public State previousState;
     public Body body;
@@ -27,6 +29,8 @@ public class Player extends Sprite
     private Animation playerFalling;
     private Animation playerStand;
     private Animation playerAttacks;
+    private Animation playerShootRun;
+    private Animation playerShootStay;
 
     private float stateTimer;
     private boolean runningRight;
@@ -53,26 +57,48 @@ public class Player extends Sprite
 
         for(int i = 0; i < 4; i++)
         {
-            frames.add(new TextureRegion(getTexture(), i * 21, 31, 20,24));
+            frames.add(new TextureRegion(getTexture(), i * 21, 25, 20,24));
 
         }
         playerRun = new Animation(0.1f, frames);
         frames.clear();
 
-        /*for(int i = 0; i < 3; i++)
+        for(int i = 0; i < 2; i++)
         {
-            frames.add(new TextureRegion(getTexture(), i * 15, 16, 14,12));
+            frames.add(new TextureRegion(getTexture(), i * 21, 50, 20,24));
+
+        }
+        playerShootStay = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 4; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 75, 20,24));
+        }
+        playerShootRun = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 5; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 101, 20,24));
+        }
+        playerAttacks = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 3; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 128, 20,24));
         }
         playerJump = new Animation(0.1f, frames);
         frames.clear();
 
-        for(int i = 0; i < 2; i++)
+        for(int i = 0; i < 3; i++)
         {
-            frames.add(new TextureRegion(getTexture(), i * 15, 29, 14,14));
+            frames.add(new TextureRegion(getTexture(), i * 21, 154, 20,24));
         }
         playerFalling = new Animation(0.1f, frames);
         frames.clear();
-        */
+
         this.x = x;
         this.y = y;
         this.width = width;
@@ -98,19 +124,27 @@ public class Player extends Sprite
         switch(currentState)
         {
             case JUMPING:
-                region = (TextureRegion) playerStand.getKeyFrame(stateTimer, true);
+                region = (TextureRegion) playerJump.getKeyFrame(stateTimer);
                 break;
             case RUNNING:
                 region = (TextureRegion) playerRun.getKeyFrame(stateTimer, true);
                 break;
             case FALLING:
-                region = (TextureRegion) playerStand.getKeyFrame(stateTimer, true);
+                region = (TextureRegion) playerFalling.getKeyFrame(stateTimer, true);
                 break;
             case STANDING:
                 region = (TextureRegion) playerStand.getKeyFrame(stateTimer, true);
                 break;
             case ATTACKS:
+                region = (TextureRegion) playerAttacks.getKeyFrame(stateTimer);
                 break;
+            case SHOOT_RUN:
+                region = (TextureRegion) playerShootRun.getKeyFrame(stateTimer, true);
+                break;
+            case SHOOT_STAY:
+                region = (TextureRegion) playerShootStay.getKeyFrame(stateTimer, true);
+                break;
+
 
         }
         if((body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX())
@@ -133,11 +167,13 @@ public class Player extends Sprite
         if(body.getLinearVelocity().y > 0 )
             return State.JUMPING;
         else if (body.getLinearVelocity().y < 0 || previousState == State.JUMPING)
-        {
             return State.FALLING;
-        }
+        else if(body.getLinearVelocity().x != 0 && Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+            return State.SHOOT_RUN;
         else if (body.getLinearVelocity().x != 0)
             return  State.RUNNING;
+        else if(Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+            return  State.SHOOT_STAY;
         else
             return State.STANDING;
     }
