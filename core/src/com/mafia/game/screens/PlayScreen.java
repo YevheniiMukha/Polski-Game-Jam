@@ -73,28 +73,8 @@ public class PlayScreen implements Screen
         }
     }
 
-    public Viewport getGamePort() {
-        return gamePort;
-    }
-
-    public OrthographicCamera getCamera() {
-        return camera;
-    }
-
     public Main getMain() {
         return main;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public Box2DDebugRenderer getBox2DDebugRenderer() {
-        return box2DDebugRenderer;
     }
 
     @Override

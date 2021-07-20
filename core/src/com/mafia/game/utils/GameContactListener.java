@@ -7,11 +7,13 @@ public class GameContactListener implements ContactListener
 
     private boolean playerOnGround = true;
     private boolean door_1 = true;
+    private boolean door_1_out = true;
 
 
 
     public boolean isPlayerOnGround() {return playerOnGround;}
     public boolean isPlayerTouchDoor_1() { return  door_1;}
+    public boolean isPlayerTouchDoor_1_out() { return  door_1_out;}
 
 
 
@@ -38,6 +40,15 @@ public class GameContactListener implements ContactListener
             door_1 = true;
         }
 
+        if(fa.getUserData() != null && fa.getUserData().equals("door_1_out"))
+        {
+            door_1_out = true;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("door_1_out"))
+        {
+            door_1_out = true;
+        }
+
     }
 
     @Override
@@ -61,6 +72,15 @@ public class GameContactListener implements ContactListener
         if(fb.getUserData() != null && fb.getUserData().equals("door_1"))
         {
             door_1 = false;
+        }
+
+        if(fa.getUserData() != null && fa.getUserData().equals("door_1_out"))
+        {
+            door_1_out = false;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("door_1_out"))
+        {
+            door_1_out = false;
         }
     }
 
