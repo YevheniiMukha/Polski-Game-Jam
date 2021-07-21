@@ -44,7 +44,9 @@ public class PlayScreen implements Screen
     private TextureAtlas atlas;
 
     private RayHandler rayhandler;
-    private ConeLight light1, light2;
+    private ConeLight light1;
+
+    PlatformCreate platform;
 
     public PlayScreen(final Main main)
     {
@@ -58,29 +60,51 @@ public class PlayScreen implements Screen
 
 
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("TestGround.tmx");
+        map = mapLoader.load("GameMap.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
 
         camera.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
+        camera.zoom = 0.8f;
 
         world = new World(new Vector2(0, -10f), true);
         world.setContactListener(gameContactListener = new GameContactListener());
         box2DDebugRenderer = new Box2DDebugRenderer();
 
 
-        player = new Player(world, 50,140,15,22, "Player", this);
+        player = new Player(world, 356,60,15,22, "Player", this);
         footSensor = new SensorCreate(0, -10, 6, 1, "foot", player.body);
 
-        //PlatformCreate platform = new PlatformCreate (world,0, 20, 100, 10, "Platform" );
-        //doorSensor = new SensorCreate(2, 16, 7, 10, "door_1",  getBody());
+        platform = new PlatformCreate (world,(int)(33.5 * Constants.pixelPerMeters), (int) (1.5 * Constants.pixelPerMeters), 10, 10, "Platform" );
+        doorSensor = new SensorCreate(0, 30, 7, 2, "door_1",  platform.getBody());
 
         MapShapeBuilder.buildShapes(map.getLayers().get("Object").getObjects(), world);
 
         rayhandler = new RayHandler(world);
         rayhandler.setAmbientLight(.1f);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,6.9f,4.6f,270, 20);
-        light2 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,1.4f,4.6f,270, 20);
 
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,16.92f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,11.42f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,22.45f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,27.95f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,32.52f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,37.10f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,41.69f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,46.26f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,52.69f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,54.53f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,62.77f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,72.87f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,78.37f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,83.87f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,88.44f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,93.01f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,97.58f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,102.16f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,108.59f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,110.43f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,118.72f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,123.29f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,127.86f,4.7f,270, 20);
     }
 
     public TextureAtlas getAtlas() {return atlas;}
@@ -123,7 +147,7 @@ public class PlayScreen implements Screen
         }
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
         {
-
+            System.out.println(player.body.getPosition());
         }
         //player.body.setLinearVelocity(speedPlayer *5, player.body.getLinearVelocity().y);
     }
@@ -166,7 +190,7 @@ public class PlayScreen implements Screen
         main.batch.end();
 
         rayhandler.render();
-        //box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
+       // box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
 
     }
 

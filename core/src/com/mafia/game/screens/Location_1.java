@@ -40,17 +40,18 @@ public class Location_1 implements Screen
        camera = new OrthographicCamera();
        gamePort = new FitViewport(Main.V_WIDTH, Main.V_HEIGHT, camera);
        camera.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
+       camera.zoom = 0.8f;
 
-        world = new World(new Vector2(0, -10f), true);
-        world.setContactListener(gameContactListener = new GameContactListener());
-        //this.player = player;
+       world = new World(new Vector2(0, -10f), true);
+       world.setContactListener(gameContactListener = new GameContactListener());
 
-        player = new Player(world, 0,120,15,22, "Player_2", playScreen);
-        SensorCreate footSensor = new SensorCreate(0, -10, 7, 1, "foot", player.body);
-        box2DDebugRenderer = new Box2DDebugRenderer();
+       //this.player = player;
+       player = new Player(world, 0,120,15,22, "Player_2", playScreen);
+       SensorCreate footSensor = new SensorCreate(0, -10, 7, 1, "foot", player.body);
+       box2DDebugRenderer = new Box2DDebugRenderer();
 
-        PlatformCreate platform = new PlatformCreate (world,0, 50, 100, 10, "Platform" );
-        SensorCreate doorSensorOut = new SensorCreate(-2, 16, 7, 10, "door_1_out", platform.getBody());
+       PlatformCreate platform = new PlatformCreate (world,0, 50, 100, 10, "Platform" );
+       SensorCreate doorSensorOut = new SensorCreate(-2, 16, 7, 10, "door_1_out", platform.getBody());
     }
 
     @Override
@@ -65,7 +66,7 @@ public class Location_1 implements Screen
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && gameContactListener.isPlayerOnGround())
         {
             //player.body.applyForceToCenter(player.body.getPosition().x, 300, true);
-            player.body.applyLinearImpulse(new Vector2(0, 4f), player.body.getWorldCenter(), true);
+            player.body.applyLinearImpulse(new Vector2(0, 2.5f), player.body.getWorldCenter(), true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.D) && player.body.getLinearVelocity().x <= 2)
         {
@@ -88,7 +89,6 @@ public class Location_1 implements Screen
     {
         if(gameContactListener.isPlayerTouchDoor_1_out() && Gdx.input.isKeyJustPressed((Input.Keys.E)))
         {
-            //System.out.println("chuj zopa ");
             playScreen.getMain().setScreen(playScreen);
         }
     }
