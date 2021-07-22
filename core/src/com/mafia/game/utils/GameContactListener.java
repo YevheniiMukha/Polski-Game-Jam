@@ -9,11 +9,26 @@ public class GameContactListener implements ContactListener
     private boolean door_1 = false;
     private boolean door_1_out = false;
 
+    private boolean door_2 = false;
+    //private boolean door_1_out = false;
+
+    private boolean door_3 = false;
+    //private boolean door_1_out = false;
+
+
+
 
 
     public boolean isPlayerOnGround() {return playerOnGround;}
+
     public boolean isPlayerTouchDoor_1() { return  door_1;}
     public boolean isPlayerTouchDoor_1_out() { return  door_1_out;}
+
+    public boolean isPlayerTouchDoor_2() { return  door_2;}
+    public boolean isPlayerTouchDoor_2_out() { return  door_1_out;}
+
+    public boolean isPlayerTouchDoor_3() { return  door_3;}
+    public boolean isPlayerTouchDoor_3_out() { return  door_1_out;}
 
 
 
@@ -40,6 +55,24 @@ public class GameContactListener implements ContactListener
             door_1 = true;
         }
 
+        if(fa.getUserData() != null && fa.getUserData().equals("door_2"))
+        {
+            door_2 = true;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("door_2"))
+        {
+            door_2 = true;
+        }
+
+        if(fa.getUserData() != null && fa.getUserData().equals("door_3"))
+        {
+            door_3 = true;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("door_3"))
+        {
+            door_3 = true;
+        }
+
         if(fa.getUserData() != null && fa.getUserData().equals("door_1_out"))
         {
             door_1_out = true;
@@ -48,6 +81,7 @@ public class GameContactListener implements ContactListener
         {
             door_1_out = true;
         }
+
 
     }
 
@@ -72,6 +106,24 @@ public class GameContactListener implements ContactListener
         if(fb.getUserData() != null && fb.getUserData().equals("door_1"))
         {
             door_1 = false;
+        }
+
+        if(fa.getUserData() != null && fa.getUserData().equals("door_2"))
+        {
+            door_2 = false;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("door_2"))
+        {
+            door_2 = false;
+        }
+
+        if(fa.getUserData() != null && fa.getUserData().equals("door_3"))
+        {
+            door_3 = false;
+        }
+        if(fb.getUserData() != null && fb.getUserData().equals("door_3"))
+        {
+            door_3 = false;
         }
 
         if(fa.getUserData() != null && fa.getUserData().equals("door_1_out"))

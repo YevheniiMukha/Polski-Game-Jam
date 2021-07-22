@@ -45,59 +45,7 @@ public class Player extends Sprite
         stateTimer = 0;
         runningRight = true;
 
-        Array<TextureRegion> frames = new Array<TextureRegion>();
-
-        for(int i = 0; i < 2; i++)
-        {
-            frames.add(new TextureRegion(getTexture(), i * 21, 0, 20,24));
-
-        }
-        playerStand = new Animation(0.2f, frames);
-        frames.clear();
-
-        for(int i = 0; i < 4; i++)
-        {
-            frames.add(new TextureRegion(getTexture(), i * 21, 25, 20,24));
-
-        }
-        playerRun = new Animation(0.1f, frames);
-        frames.clear();
-
-        for(int i = 0; i < 2; i++)
-        {
-            frames.add(new TextureRegion(getTexture(), i * 21, 50, 20,24));
-
-        }
-        playerShootStay = new Animation(0.1f, frames);
-        frames.clear();
-
-        for(int i = 0; i < 4; i++)
-        {
-            frames.add(new TextureRegion(getTexture(), i * 21, 75, 20,24));
-        }
-        playerShootRun = new Animation(0.1f, frames);
-        frames.clear();
-
-        for(int i = 0; i < 5; i++)
-        {
-            frames.add(new TextureRegion(getTexture(), i * 21, 101, 20,24));
-        }
-        playerAttacks = new Animation(0.1f, frames);
-        frames.clear();
-
-        for(int i = 0; i < 3; i++)
-        {
-            frames.add(new TextureRegion(getTexture(), i * 21, 128, 20,24));
-        }
-        playerJump = new Animation(0.1f, frames);
-        frames.clear();
-
-        for(int i = 0; i < 3; i++)
-        {
-            frames.add(new TextureRegion(getTexture(), i * 21, 154, 20,24));
-        }
-        playerFalling = new Animation(0.1f, frames);
-        frames.clear();
+        animationSet();
 
         this.x = x;
         this.y = y;
@@ -177,6 +125,64 @@ public class Player extends Sprite
         else
             return State.STANDING;
     }
+
+    private void animationSet()
+    {
+        Array<TextureRegion> frames = new Array<TextureRegion>();
+
+        for(int i = 0; i < 2; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 0, 20,24));
+
+        }
+        playerStand = new Animation(0.2f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 4; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 25, 20,24));
+
+        }
+        playerRun = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 2; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 50, 20,24));
+
+        }
+        playerShootStay = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 4; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 75, 20,24));
+        }
+        playerShootRun = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 5; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 101, 20,24));
+        }
+        playerAttacks = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 3; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 128, 20,24));
+        }
+        playerJump = new Animation(0.1f, frames);
+        frames.clear();
+
+        for(int i = 0; i < 3; i++)
+        {
+            frames.add(new TextureRegion(getTexture(), i * 21, 154, 20,24));
+        }
+        playerFalling = new Animation(0.1f, frames);
+        frames.clear();
+    }
+
     private void definePlayer()
     {
         BodyDef def = new BodyDef();
@@ -188,7 +194,7 @@ public class Player extends Sprite
         body = world.createBody(def);
         shape.setAsBox(width / 2 / Constants.pixelPerMeters, height / 2 / Constants.pixelPerMeters);
         body.createFixture(shape, 1.0f).setUserData(name);
-        // shape.dispose();
+         shape.dispose();
     }
 
 }

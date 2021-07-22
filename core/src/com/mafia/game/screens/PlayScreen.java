@@ -1,6 +1,7 @@
 package com.mafia.game.screens;
 
 import box2dLight.ConeLight;
+import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,7 +9,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -16,7 +16,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mafia.game.Main;
@@ -45,6 +44,8 @@ public class PlayScreen implements Screen
 
     private RayHandler rayhandler;
     private ConeLight light1;
+    private PointLight light2;
+    private ShopLocation location_1, location_2, location_3;
 
     PlatformCreate platform;
 
@@ -77,47 +78,46 @@ public class PlayScreen implements Screen
         platform = new PlatformCreate (world,(int)(33.5 * Constants.pixelPerMeters), (int) (1.5 * Constants.pixelPerMeters), 10, 10, "Platform" );
         doorSensor = new SensorCreate(0, 30, 7, 2, "door_1",  platform.getBody());
 
+        platform = new PlatformCreate (world,(int)(89.4 * Constants.pixelPerMeters), (int) (1.5 * Constants.pixelPerMeters), 10, 10, "Platform_2" );
+        doorSensor = new SensorCreate(0, 30, 7, 2, "door_2",  platform.getBody());
+
+        platform = new PlatformCreate (world,(int)(119.7 * Constants.pixelPerMeters), (int) (1.5 * Constants.pixelPerMeters), 10, 10, "Platform_3" );
+        doorSensor = new SensorCreate(0, 30, 7, 2, "door_3",  platform.getBody());
+
         MapShapeBuilder.buildShapes(map.getLayers().get("Object").getObjects(), world);
 
         rayhandler = new RayHandler(world);
         rayhandler.setAmbientLight(.1f);
 
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,16.92f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,11.42f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,22.45f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,27.95f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,32.52f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,37.10f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,41.69f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,46.26f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,52.69f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,54.53f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,62.77f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,72.87f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,78.37f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,83.87f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,88.44f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,93.01f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,97.58f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,102.16f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,108.59f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,110.43f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,118.72f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,123.29f,4.7f,270, 20);
-        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,127.86f,4.7f,270, 20);
+        lightsCreate();
+
+        location_1 = new ShopLocation(this, new TextureAtlas("Enemy/NPC_1.pack"));
+        location_2 = new ShopLocation(this, new TextureAtlas("Enemy/NPC_1.pack"));
+        location_3 = new ShopLocation(this, new TextureAtlas("Enemy/NPC_1.pack"));
+
     }
 
     public TextureAtlas getAtlas() {return atlas;}
 
+
     public void doorUpdate()
     {
-        if(gameContactListener.isPlayerTouchDoor_1() & Gdx.input.isKeyJustPressed((Input.Keys.E)))
+        if(gameContactListener.isPlayerTouchDoor_1() && Gdx.input.isKeyJustPressed((Input.Keys.E)))
         {
-            main.setScreen(new Location_1(this));
+            main.setScreen(location_1);
+        }
+        else if(gameContactListener.isPlayerTouchDoor_2() && Gdx.input.isKeyJustPressed((Input.Keys.E)))
+        {
+            main.setScreen(location_2);
+        }
+        else if (gameContactListener.isPlayerTouchDoor_3() && Gdx.input.isKeyJustPressed((Input.Keys.E)))
+        {
+            main.setScreen(location_3);
         }
     }
 
-    public Main getMain() {
+    public Main getMain()
+    {
         return main;
     }
 
@@ -190,9 +190,61 @@ public class PlayScreen implements Screen
         main.batch.end();
 
         rayhandler.render();
-       // box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
+        box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
 
     }
+
+    private void lightsCreate()
+    {
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 11.42f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 16.92f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 22.45f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 27.95f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 32.52f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 37.10f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 41.69f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 46.26f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 52.69f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 54.53f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 62.77f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 72.87f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 78.37f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 83.87f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 88.44f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 93.01f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 97.58f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 102.16f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 108.59f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 110.43f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 118.72f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 123.29f, 4.55f);
+        light2 = new PointLight (rayhandler, 100, Color.ORANGE, 1f, 127.86f, 4.55f);
+
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,16.92f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,11.42f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,22.45f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,27.95f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,32.52f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,37.10f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,41.69f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,46.26f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,52.69f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,54.53f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,62.77f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,72.87f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,78.37f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,83.87f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,88.44f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,93.01f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,97.58f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,102.16f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,108.59f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,110.43f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,118.72f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,123.29f,4.7f,270, 20);
+        light1 = new ConeLight  (rayhandler, 100, Color.ORANGE, 10,127.86f,4.7f,270, 20);
+    }
+
 
     @Override
     public void resize(int width, int height) {
