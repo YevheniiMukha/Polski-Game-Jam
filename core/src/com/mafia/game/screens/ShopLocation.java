@@ -166,7 +166,7 @@ public class ShopLocation implements Screen
         player.draw(playScreen.getMain().batch);
         enemy.draw(playScreen.getMain().batch);
         playScreen.getMain().batch.end();
-       // box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
+        box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
         rayhandler.render();
     }
 
