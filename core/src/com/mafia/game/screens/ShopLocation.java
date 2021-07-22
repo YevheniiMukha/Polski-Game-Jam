@@ -79,12 +79,12 @@ public class ShopLocation implements Screen
        enemy = new Enemy(world, 470, 60, 15,22, "enemy", this);
        SensorCreate footSensor = new SensorCreate(0, -10, 7, 1, "foot", player.body);
 
-        PlatformCreate platform = new PlatformCreate (world,(int)(18.8 * Constants.pixelPerMeters), (int) (1.5 * Constants.pixelPerMeters), 10, 10, "Platform" );
-        SensorCreate doorSensorOut = new SensorCreate(0, 30, 7, 2, "door_1_out",  platform.getBody());
+       PlatformCreate platform = new PlatformCreate (world,(int)(18.8 * Constants.pixelPerMeters), (int) (1.5 * Constants.pixelPerMeters), 10, 10, "Platform" );
+       SensorCreate doorSensorOut = new SensorCreate(0, 30, 7, 2, "door_1_out",  platform.getBody());
 
        box2DDebugRenderer = new Box2DDebugRenderer();
 
-        MapShapeBuilder.buildShapes(map.getLayers().get("ObjectSklep").getObjects(), world);
+       MapShapeBuilder.buildShapes(map.getLayers().get("ObjectSklep").getObjects(), world);
 
         rayhandler = new RayHandler(world);
         rayhandler.setAmbientLight(.5f);

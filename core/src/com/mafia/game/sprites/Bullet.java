@@ -34,7 +34,7 @@ public class Bullet extends Sprite
         def.bullet = true;
         def.gravityScale = 0;
         Body bullet =  world.createBody(def);
-        shape.setAsBox( 1 / Constants.pixelPerMeters, 1 / Constants.pixelPerMeters);
+        shape.setAsBox( 0.5f / Constants.pixelPerMeters, 0.5f / Constants.pixelPerMeters);
         bullet.createFixture(shape, 1.0f).setUserData("bullet");
 
         if (isRight)

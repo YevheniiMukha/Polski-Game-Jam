@@ -153,7 +153,7 @@ public class PlayScreen implements Screen
             player.body.applyLinearImpulse(new Vector2(-0.1f, 0), player.body.getWorldCenter(), true);
             isRight = false;
         }
-        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT))
         {
             System.out.println(player.body.getPosition());
             bullet.shoot(player.body.getPosition().x, player.body.getPosition().y, isRight);
