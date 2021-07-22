@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.mafia.game.screens.ShopLocation;
 import com.mafia.game.utils.Constants;
+import com.mafia.game.utils.GameContactListener;
 
 public class Enemy extends Sprite
 {
@@ -72,12 +73,14 @@ public class Enemy extends Sprite
 
     }
 
-    public void update(float delta)
+    public void update(float delta, GameContactListener gameContactListener)
     {
         setPosition(body.getPosition().x * Constants.pixelPerMeters - (getRegionWidth() / 2f), body.getPosition().y * Constants.pixelPerMeters - (getRegionHeight() / 2f));
         setRegion(getFrame(delta));
         //движение персонажа
-        body.setLinearVelocity(velocity);
+        if(gameContactListener.isEnemyMoveRight())
+            body.setLinearVelocity(velocity);
+        else body.setLinearVelocity(velocity.x * -1, velocity.y);
     }
 
     private TextureRegion getFrame(float delta)

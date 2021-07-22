@@ -15,10 +15,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mafia.game.Main;
+import com.mafia.game.sprites.Bullet;
 import com.mafia.game.sprites.Enemy;
 import com.mafia.game.sprites.Player;
 import com.mafia.game.utils.*;
@@ -39,6 +42,8 @@ public class ShopLocation implements Screen
 
     private GameContactListener gameContactListener;
     private TextureAtlas atlas;
+    public Bullet bullet;
+    private boolean isRight;
 
     private World world;
     private Player player;
@@ -67,6 +72,7 @@ public class ShopLocation implements Screen
 
        world = new World(new Vector2(0, -10f), true);
        world.setContactListener(gameContactListener = new GameContactListener());
+       bullet = new Bullet(world);
 
        //this.player = player;
        player = new Player(world, 451,60,15,22, "Player_2", playScreen);
@@ -108,15 +114,18 @@ public class ShopLocation implements Screen
         {
             //speedPlayer += 1.7;
             player.body.applyLinearImpulse(new Vector2(0.1f, 0), player.body.getWorldCenter(), true);
+            isRight = true;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.A) && player.body.getLinearVelocity().x >= -2)
         {
             //speedPlayer -= 1.7;
             player.body.applyLinearImpulse(new Vector2(-0.1f, 0), player.body.getWorldCenter(), true);
+            isRight = false;
         }
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
         {
             System.out.println(player.body.getPosition());
+            bullet.shoot(player.body.getPosition().x, player.body.getPosition().y, isRight);
         }
         //player.body.setLinearVelocity(speedPlayer *5, player.body.getLinearVelocity().y);
     }
@@ -138,7 +147,7 @@ public class ShopLocation implements Screen
         world.step(1/60f, 6,2);
 
         player.update(delta);
-        enemy.update(delta);
+        enemy.update(delta, gameContactListener);
 
 
         camera.position.x = player.body.getPosition().x * Constants.pixelPerMeters;
@@ -165,6 +174,7 @@ public class ShopLocation implements Screen
         playScreen.getMain().batch.begin();
         player.draw(playScreen.getMain().batch);
         enemy.draw(playScreen.getMain().batch);
+        CheckForDelete();
         playScreen.getMain().batch.end();
         box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
         rayhandler.render();
@@ -191,6 +201,22 @@ public class ShopLocation implements Screen
         light2 = new PointLight (rayhandler, 100, Color.CORAL, .9f, 7.76f, 5.7f);
     }
 
+    public void CheckForDelete()
+    {
+        Array<Fixture> tmp = new Array<>();
+        world.getFixtures(tmp);
+        for(int i = 0; i < world.getFixtureCount(); i++)
+        {
+            if ( tmp.get(i).getUserData() != null)
+            {
+                if (tmp.get(i).getUserData().equals("delete"))
+                {
+                    tmp.get(i).getBody().setActive(false);
+                    world.destroyBody(tmp.get(i).getBody());
+                }
+            }
+        }
+    }
     @Override
     public void resize(int width, int height)
     {

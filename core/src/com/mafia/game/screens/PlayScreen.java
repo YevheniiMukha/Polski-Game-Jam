@@ -15,10 +15,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mafia.game.Main;
+import com.mafia.game.sprites.Bullet;
 import com.mafia.game.sprites.Player;
 import com.mafia.game.utils.*;
 
@@ -37,6 +40,8 @@ public class PlayScreen implements Screen
     private Player player;
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
+    public Bullet bullet;
+    private boolean isRight;
 
     private SensorCreate footSensor, doorSensor;
     private GameContactListener gameContactListener;
@@ -70,6 +75,7 @@ public class PlayScreen implements Screen
         world = new World(new Vector2(0, -10f), true);
         world.setContactListener(gameContactListener = new GameContactListener());
         box2DDebugRenderer = new Box2DDebugRenderer();
+        bullet = new Bullet(world);
 
 
         player = new Player(world, 356,60,15,22, "Player", this);
@@ -139,15 +145,18 @@ public class PlayScreen implements Screen
         {
             //speedPlayer += 1.7;
             player.body.applyLinearImpulse(new Vector2(0.1f, 0), player.body.getWorldCenter(), true);
+            isRight = true;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.A) && player.body.getLinearVelocity().x >= -2)
         {
             //speedPlayer -= 1.7;
             player.body.applyLinearImpulse(new Vector2(-0.1f, 0), player.body.getWorldCenter(), true);
+            isRight = false;
         }
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
         {
             System.out.println(player.body.getPosition());
+            bullet.shoot(player.body.getPosition().x, player.body.getPosition().y, isRight);
         }
         //player.body.setLinearVelocity(speedPlayer *5, player.body.getLinearVelocity().y);
     }
@@ -187,6 +196,8 @@ public class PlayScreen implements Screen
 
         main.batch.begin();
         player.draw(main.batch);
+        CheckForDelete();
+        //drawBullet();
         main.batch.end();
 
         rayhandler.render();
@@ -247,10 +258,41 @@ public class PlayScreen implements Screen
 
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(int width, int height)
+    {
         gamePort.update(width,height);
     }
 
+    public void drawBullet()
+    {
+        Array<Fixture> tmp = new Array<>();
+        world.getFixtures(tmp);
+        for(int i = 0; i < world.getFixtureCount(); i++)
+        {
+            if ( tmp.get(i).getUserData() != null)
+            {
+                if(tmp.get(i).getUserData().equals("bullet"))
+                    main.batch.draw(bullet.bulletImg, tmp.get(i).getBody().getPosition().x + 400, tmp.get(i).getBody().getPosition().y +50, 50, 50);
+            }
+        }
+    }
+
+    public void CheckForDelete()
+    {
+        Array<Fixture> tmp = new Array<>();
+        world.getFixtures(tmp);
+        for(int i = 0; i < world.getFixtureCount(); i++)
+        {
+            if ( tmp.get(i).getUserData() != null)
+            {
+                if (tmp.get(i).getUserData().equals("delete"))
+                {
+                    tmp.get(i).getBody().setActive(false);
+                    world.destroyBody(tmp.get(i).getBody());
+                }
+            }
+        }
+    }
     @Override
     public void pause() {
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.*;
 public class GameContactListener implements ContactListener
 {
 
+    private boolean EnemyMoveRight = true;
     private boolean playerOnGround = true;
     private boolean door_1 = false;
     private boolean door_1_out = false;
@@ -18,7 +19,7 @@ public class GameContactListener implements ContactListener
 
 
 
-
+    public boolean isEnemyMoveRight() {return  EnemyMoveRight;}
     public boolean isPlayerOnGround() {return playerOnGround;}
 
     public boolean isPlayerTouchDoor_1() { return  door_1;}
@@ -82,7 +83,39 @@ public class GameContactListener implements ContactListener
             door_1_out = true;
         }
 
+        if(fa.getUserData() != null && fb.getUserData() != null && fa.getUserData().equals("bullet") && fb.getUserData().equals("enemy"))
+        {
+            fb.setUserData("delete");
+            fa.setUserData("delete");
+        }
+        if(fa.getUserData() != null && fb.getUserData() != null && fb.getUserData().equals("bullet") && fa.getUserData().equals("enemy"))
+        {
+            fa.setUserData("delete");
+            fb.setUserData("delete");
+        }
 
+        if(fb.getUserData() != null &&   fa.getUserData() != null && fa.getUserData().equals("bullet"))
+        {
+            fa.setUserData("delete");
+        }
+        if(fa.getUserData() != null &&  fb.getUserData() != null && fb.getUserData().equals("bullet"))
+        {
+            fb.setUserData("delete");
+        }
+
+        if(fa.getUserData() != null && fa.getUserData().equals("enemy") && fb.getUserData() != null)
+        {
+            if((fa.getBody().getLinearVelocity().x) < 0)
+                EnemyMoveRight = true;
+            else EnemyMoveRight = false;
+        }
+
+        if(fb.getUserData() != null && fb.getUserData().equals("enemy") && fa.getUserData() != null)
+        {
+            if((fb.getBody().getLinearVelocity().x) < 0)
+                EnemyMoveRight = true;
+            else EnemyMoveRight = false;
+        }
     }
 
     @Override

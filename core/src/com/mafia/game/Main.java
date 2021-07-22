@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mafia.game.screens.Hud;
+import com.mafia.game.screens.MenuScreen;
 import com.mafia.game.screens.PlayScreen;
 
 public class Main extends Game {
