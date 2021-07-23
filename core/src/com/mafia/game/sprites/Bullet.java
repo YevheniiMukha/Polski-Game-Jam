@@ -8,9 +8,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mafia.game.utils.Constants;
 
+import java.util.Random;
+
 public class Bullet extends Sprite
 {
-    private float Speed = 20;
+    private float Speed = 10;
     private World world;
     public Texture bulletImg;
 
@@ -23,13 +25,14 @@ public class Bullet extends Sprite
 
     public void shoot( float x, float y, boolean isRight)
     {
+        double d = Math.random() * (0.1 - (-0.1)) + (-0.1);
         BodyDef def = new BodyDef();
         PolygonShape shape = new PolygonShape();
 
         def.type = BodyDef.BodyType.DynamicBody;
         if (isRight)
-            def.position.set( x + .5f, y  );
-        else  def.position.set( x - .5f, y  );
+            def.position.set( x + .5f, y + (float)d  );
+        else  def.position.set( x - .5f, y + (float)d );
         def.fixedRotation = true;
         def.bullet = true;
         def.gravityScale = 0;

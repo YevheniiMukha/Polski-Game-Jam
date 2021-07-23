@@ -23,6 +23,7 @@ public class MenuScreen implements Screen
     public  Texture ExitActive;
     public  Texture PlayInActive;
     public  Texture ExitInActive;
+    public  Texture Menu;
 
     public OrthographicCamera camera;
     public FitViewport gamePort;
@@ -35,6 +36,8 @@ public class MenuScreen implements Screen
         ExitActive = new Texture("menu/ExitActive.png");
         PlayInActive = new Texture("menu/NewGameInActive.png");
         ExitInActive = new Texture("menu/ExitInActive.png");
+        Menu = new Texture("menu/menu.png");
+
 
         camera = new OrthographicCamera();
         gamePort = new FitViewport(1980, 1080, camera);
@@ -57,6 +60,7 @@ public class MenuScreen implements Screen
         update(delta);
         ScreenUtils.clear(0, 0, 0, 1);
         main.batch.begin();
+        main.batch.draw(Menu, 0, 0, 1920, 1080 );
         if(Gdx.input.getX() > 1920 / 2 - PlayWidth / 2 && 1080 - Gdx.input.getY() > PlayY + 25 &&
                 Gdx.input.getX() < 1920 / 2 + PlayWidth / 2 && 1080 - Gdx.input.getY() < PlayY + PlayHeight + 25 )
         {
