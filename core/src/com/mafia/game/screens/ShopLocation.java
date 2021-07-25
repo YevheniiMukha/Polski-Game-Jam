@@ -26,6 +26,8 @@ import com.mafia.game.sprites.Enemy;
 import com.mafia.game.sprites.Player;
 import com.mafia.game.utils.*;
 
+import java.util.ArrayList;
+
 public class ShopLocation implements Screen
 {
 
@@ -52,7 +54,10 @@ public class ShopLocation implements Screen
     private ConeLight light1;
     private PointLight light2;
 
+    private ArrayList<Bullet> bullets;
+
     Enemy enemy;
+    private boolean shooting;
 
 
     public ShopLocation(final PlayScreen playScreen, TextureAtlas atlas)
@@ -62,7 +67,7 @@ public class ShopLocation implements Screen
        this.atlas = atlas;
        camera = new OrthographicCamera();
        gamePort = new FitViewport(Main.V_WIDTH, Main.V_HEIGHT, camera);
-
+        bullets = new ArrayList<>();
        mapLoader = new TmxMapLoader();
        map = mapLoader.load("sklep.tmx");
        renderer = new OrthogonalTiledMapRenderer(map);
@@ -72,12 +77,15 @@ public class ShopLocation implements Screen
 
        world = new World(new Vector2(0, -10f), true);
        world.setContactListener(gameContactListener = new GameContactListener());
-       bullet = new Bullet(world);
+       //bullet = new Bullet(world);
 
        //this.player = player;
        player = new Player(world, 451,60,15,22, "Player_2", playScreen);
-       enemy = new Enemy(world, 470, 60, 15,22, "enemy", this);
-       SensorCreate footSensor = new SensorCreate(0, -10, 7, 1, "foot", player.body);
+       enemy = new Enemy(world, 600, 60, 15,22, "enemy", this);
+       SensorCreate footSensor =  new SensorCreate(0, -10, 6, 1, "foot", player.body);
+
+        PlatformCreate platformCreate = new PlatformCreate (world,(int)(5.41 * Constants.pixelPerMeters), (int) (4.47 * Constants.pixelPerMeters), 1, 120, "Platform_3" );
+        platformCreate = new PlatformCreate (world,(int)(32.9 * Constants.pixelPerMeters), (int) (4.47 * Constants.pixelPerMeters), 1, 120, "Platform_3" );
 
        PlatformCreate platform = new PlatformCreate (world,(int)(18.8 * Constants.pixelPerMeters), (int) (1.5 * Constants.pixelPerMeters), 10, 10, "Platform" );
        SensorCreate doorSensorOut = new SensorCreate(0, 30, 7, 2, "door_1_out",  platform.getBody());
@@ -104,30 +112,29 @@ public class ShopLocation implements Screen
 
     public void handleInput(float delta)
     {
-        //float speedPlayer = 0;
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && gameContactListener.isPlayerOnGround())
         {
-            //player.body.applyForceToCenter(player.body.getPosition().x, 300, true);
             player.body.applyLinearImpulse(new Vector2(0, 2.5f), player.body.getWorldCenter(), true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.D) && player.body.getLinearVelocity().x <= 2)
         {
-            //speedPlayer += 1.7;
             player.body.applyLinearImpulse(new Vector2(0.1f, 0), player.body.getWorldCenter(), true);
             isRight = true;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.A) && player.body.getLinearVelocity().x >= -2)
         {
-            //speedPlayer -= 1.7;
             player.body.applyLinearImpulse(new Vector2(-0.1f, 0), player.body.getWorldCenter(), true);
             isRight = false;
         }
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
         {
             System.out.println(player.body.getPosition());
-            bullet.shoot(player.body.getPosition().x, player.body.getPosition().y, isRight);
+            bullets.add(new Bullet(world,player.body.getPosition().x, player.body.getPosition().y, isRight));
+            long id = playScreen.getSound().play(.2f);
+            playScreen.getSound().setPitch(id, 0.6f);
+            playScreen.getSound().setLooping(id, false);
+            shooting = true;
         }
-        //player.body.setLinearVelocity(speedPlayer *5, player.body.getLinearVelocity().y);
     }
 
     public void doorUpdate()
@@ -147,7 +154,32 @@ public class ShopLocation implements Screen
         world.step(1/60f, 6,2);
 
         player.update(delta);
-        enemy.update(delta, gameContactListener);
+
+        if(!enemy.body.isActive())
+        {
+            enemy.isActiveBody = false;
+        }
+        else
+            enemy.update(delta, gameContactListener);
+
+        ArrayList<Bullet> bulletsRemove = new ArrayList<>();
+        if(shooting)
+        {
+            for(Bullet bullet : bullets)
+            {
+
+                if(!bullet.getBullet().isActive())
+                {
+                    bulletsRemove.add(bullet);
+
+                }
+                else
+                    bullet.update(delta);
+            }
+            bullets.removeAll(bulletsRemove);
+        }
+
+
 
 
         camera.position.x = player.body.getPosition().x * Constants.pixelPerMeters;
@@ -170,13 +202,22 @@ public class ShopLocation implements Screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.render();
 
+
         playScreen.getMain().batch.setProjectionMatrix(camera.combined);
         playScreen.getMain().batch.begin();
         player.draw(playScreen.getMain().batch);
         enemy.draw(playScreen.getMain().batch);
+        if(shooting)
+        {
+            for(Bullet bullet : bullets)
+            {
+                if(bullet.getBullet().isActive())
+                    bullet.draw(playScreen.getMain().batch);
+            }
+        }
         CheckForDelete();
         playScreen.getMain().batch.end();
-        box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
+       // box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
         rayhandler.render();
     }
 
@@ -210,6 +251,11 @@ public class ShopLocation implements Screen
             if ( tmp.get(i).getUserData() != null)
             {
                 if (tmp.get(i).getUserData().equals("delete"))
+                {
+                    tmp.get(i).getBody().setActive(false);
+                    playScreen.getMain().hud.score += 10;
+                    world.destroyBody(tmp.get(i).getBody());
+                }else if (tmp.get(i).getUserData().equals("delete_bullet"))
                 {
                     tmp.get(i).getBody().setActive(false);
                     world.destroyBody(tmp.get(i).getBody());

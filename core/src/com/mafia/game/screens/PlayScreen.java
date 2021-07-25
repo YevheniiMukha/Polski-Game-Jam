@@ -6,6 +6,8 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -24,6 +26,8 @@ import com.mafia.game.Main;
 import com.mafia.game.sprites.Bullet;
 import com.mafia.game.sprites.Player;
 import com.mafia.game.utils.*;
+
+import java.util.ArrayList;
 
 public class PlayScreen implements Screen
 {
@@ -52,19 +56,25 @@ public class PlayScreen implements Screen
     private PointLight light2;
     private ShopLocation location_1, location_2, location_3;
 
+    private ArrayList<Bullet> bullets;
+
+    private boolean shooting;
+    public boolean isActive;
+
+    private Sound sound;
+
     PlatformCreate platform;
 
     public PlayScreen(final Main main)
     {
-
         atlas = new TextureAtlas("Player_Animations.pack");
 
         this.main = main;
-
+        isActive = false;
         camera = new OrthographicCamera();
         gamePort = new FitViewport(Main.V_WIDTH, Main.V_HEIGHT, camera);
 
-
+        bullets = new ArrayList<>();
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("GameMap.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
@@ -72,13 +82,17 @@ public class PlayScreen implements Screen
         camera.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
         camera.zoom = 0.8f;
 
+        shooting = false;
+
+        sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/shoot.mp3"));
+
         world = new World(new Vector2(0, -10f), true);
         world.setContactListener(gameContactListener = new GameContactListener());
         box2DDebugRenderer = new Box2DDebugRenderer();
-        bullet = new Bullet(world);
 
+        platform = new PlatformCreate (world,(int)(14.98 * Constants.pixelPerMeters), (int) (4.47 * Constants.pixelPerMeters), 1, 120, "Platform_3" );
 
-        player = new Player(world, 356,60,15,22, "Player", this);
+        player = new Player(world, 376,60,15,22, "Player", this);
         footSensor = new SensorCreate(0, -10, 6, 1, "foot", player.body);
 
         platform = new PlatformCreate (world,(int)(33.5 * Constants.pixelPerMeters), (int) (1.5 * Constants.pixelPerMeters), 10, 10, "Platform" );
@@ -133,49 +147,65 @@ public class PlayScreen implements Screen
 
     }
 
+    public Sound getSound() {
+        return sound;
+    }
+
     public void handleInput(float delta)
     {
-        //float speedPlayer = 0;
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && gameContactListener.isPlayerOnGround())
         {
-            //player.body.applyForceToCenter(player.body.getPosition().x, 300, true);
             player.body.applyLinearImpulse(new Vector2(0, 2.5f), player.body.getWorldCenter(), true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.D) && player.body.getLinearVelocity().x <= 2)
         {
-            //speedPlayer += 1.7;
             player.body.applyLinearImpulse(new Vector2(0.1f, 0), player.body.getWorldCenter(), true);
             isRight = true;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.A) && player.body.getLinearVelocity().x >= -2)
         {
-            //speedPlayer -= 1.7;
             player.body.applyLinearImpulse(new Vector2(-0.1f, 0), player.body.getWorldCenter(), true);
             isRight = false;
         }
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
         {
-            System.out.println(player.body.getPosition());
-            bullet.shoot(player.body.getPosition().x, player.body.getPosition().y, isRight);
+            bullets.add(new Bullet(world,player.body.getPosition().x, player.body.getPosition().y, isRight));
+            long id =sound.play(.2f);
+            sound.setPitch(id, 0.6f);
+            sound.setLooping(id, false);
+            shooting = true;
         }
-        //player.body.setLinearVelocity(speedPlayer *5, player.body.getLinearVelocity().y);
     }
 
     public void update(float delta)
     {
         //camera.position.x = 0;
 
-
         handleInput(delta);
         rayhandler.update();
         doorUpdate();
 
         world.step(1/60f, 6,2);
-
+         ArrayList<Bullet> bulletsRemove = new ArrayList<>();
         player.update(delta);
+        if(shooting)
+        {
+            for(Bullet bullet : bullets)
+            {
+                if(!bullet.getBullet().isActive())
+                {
+                    bulletsRemove.add(bullet);
+                }
+                else
+                    bullet.update(delta);
+            }
+            bullets.removeAll(bulletsRemove);
+        }
+
+
+
 
         camera.position.x = player.body.getPosition().x * Constants.pixelPerMeters;
-       // camera.position.y = player.body.getPosition().y * Constants.pixelPerMeters;
         camera.update();
         renderer.setView(camera);
         rayhandler.setCombinedMatrix(camera.combined.cpy().scl(Constants.pixelPerMeters));
@@ -191,17 +221,24 @@ public class PlayScreen implements Screen
 
         renderer.render();
 
-
         main.batch.setProjectionMatrix(camera.combined);
-
         main.batch.begin();
         player.draw(main.batch);
-        CheckForDelete();
-        //drawBullet();
+
+        if(shooting)
+        {
+            for(Bullet bullet : bullets)
+            {
+                if(bullet.getBullet().isActive())
+                    bullet.draw(main.batch);
+            }
+        }
+
         main.batch.end();
 
+        CheckForDelete();
         rayhandler.render();
-        box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
+        //box2DDebugRenderer.render(world, camera.combined.scl(Constants.pixelPerMeters));
 
     }
 
@@ -263,23 +300,10 @@ public class PlayScreen implements Screen
         gamePort.update(width,height);
     }
 
-    public void drawBullet()
-    {
-        Array<Fixture> tmp = new Array<>();
-        world.getFixtures(tmp);
-        for(int i = 0; i < world.getFixtureCount(); i++)
-        {
-            if ( tmp.get(i).getUserData() != null)
-            {
-                if(tmp.get(i).getUserData().equals("bullet"))
-                    main.batch.draw(bullet.bulletImg, tmp.get(i).getBody().getPosition().x + 400, tmp.get(i).getBody().getPosition().y +50, 50, 50);
-            }
-        }
-    }
 
     public void CheckForDelete()
     {
-        Array<Fixture> tmp = new Array<>();
+        Array<Fixture> tmp = new Array<Fixture>();
         world.getFixtures(tmp);
         for(int i = 0; i < world.getFixtureCount(); i++)
         {
@@ -290,6 +314,12 @@ public class PlayScreen implements Screen
                     tmp.get(i).getBody().setActive(false);
                     world.destroyBody(tmp.get(i).getBody());
                 }
+                if (tmp.get(i).getUserData().equals("delete_bullet"))
+                {
+                    tmp.get(i).getBody().setActive(false);
+                    world.destroyBody(tmp.get(i).getBody());
+                }
+
             }
         }
     }
@@ -314,5 +344,6 @@ public class PlayScreen implements Screen
         map.dispose();
         renderer.dispose();
         world.dispose();
+        sound.dispose();
     }
 }

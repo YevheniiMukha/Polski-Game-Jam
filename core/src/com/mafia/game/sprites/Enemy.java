@@ -15,6 +15,8 @@ import com.mafia.game.screens.ShopLocation;
 import com.mafia.game.utils.Constants;
 import com.mafia.game.utils.GameContactListener;
 
+import javax.swing.*;
+
 public class Enemy extends Sprite
 {
     public enum State {RUNNING, DEAD};
@@ -24,6 +26,8 @@ public class Enemy extends Sprite
     public World world;
     private int x, y, width, height;
     private String name;
+
+    public boolean isActiveBody;
 
     private Animation enemyRunning;
     private Animation enemyDead;
@@ -38,8 +42,7 @@ public class Enemy extends Sprite
 
         super(screen.getAtlas().findRegion("npc"));
         this.world = world;
-
-
+        isActiveBody = true;
         currentState = State.RUNNING;
         previousState = State.RUNNING;
         stateTimer = 0;
@@ -69,24 +72,39 @@ public class Enemy extends Sprite
         this.name = name;
         defineEnemy();
         velocity  = new Vector2(2, 0);
+
         setBounds(0, 0, 12  , 21);
 
     }
 
     public void update(float delta, GameContactListener gameContactListener)
     {
-        setPosition(body.getPosition().x * Constants.pixelPerMeters - (getRegionWidth() / 2f), body.getPosition().y * Constants.pixelPerMeters - (getRegionHeight() / 2f));
+        if(isActiveBody)
+        {
+            setPosition(body.getPosition().x * Constants.pixelPerMeters - (getRegionWidth() / 2f), body.getPosition().y * Constants.pixelPerMeters - (getRegionHeight() / 2f));
+
+            if(gameContactListener.isEnemyMoveRight())
+                body.setLinearVelocity(velocity);
+            else
+                body.setLinearVelocity(velocity.x * -1, velocity.y);
+        }
+
         setRegion(getFrame(delta));
-        //движение персонажа
-        if(gameContactListener.isEnemyMoveRight())
-            body.setLinearVelocity(velocity);
-        else body.setLinearVelocity(velocity.x * -1, velocity.y);
+
     }
 
     private TextureRegion getFrame(float delta)
     {
+
+        TextureRegion region;
         currentState = getState();
-        TextureRegion region =  (TextureRegion) enemyRunning.getKeyFrame(stateTimer, true);
+        if(isActiveBody)
+        {
+            region = (TextureRegion) enemyRunning.getKeyFrame(stateTimer, true);
+        }
+        else
+            region =  (TextureRegion) enemyDead.getKeyFrame(stateTimer, true);
+
         switch(currentState)
         {
             case RUNNING:
@@ -97,37 +115,34 @@ public class Enemy extends Sprite
                 break;
 
         }
-        if((body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX())
+        if(isActiveBody)
         {
-            region.flip(true, false);
-            runningRight = false;
+            if((body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX())
+            {
+                region.flip(true, false);
+                runningRight = false;
+            }
+            else if((body.getLinearVelocity().x > 0 || runningRight) && region.isFlipX())
+            {
+                region.flip(true, false);
+                runningRight = true;
+            }
+
         }
-        else if((body.getLinearVelocity().x > 0 || runningRight) && region.isFlipX())
-        {
-            region.flip(true, false);
-            runningRight = true;
-        }
-        stateTimer = currentState == previousState ? stateTimer + delta : 0;
-        previousState = currentState;
+
+            stateTimer = currentState == previousState ? stateTimer + delta : 0;
+            previousState = currentState;
+
         return region;
     }
 
     public State getState()
     {
 
-        if (body.getLinearVelocity().x != 0)
+        if (isActiveBody)
             return  State.RUNNING;
         else
-            return State.RUNNING;
-    }
-
-    //метод для ревёрса движения при коллизии
-    public void reverseVelocity(boolean x, boolean y)
-    {
-        if(x)
-            velocity.x = -velocity.x;
-        if(y)
-            velocity.y = -velocity.y;
+            return State.DEAD;
     }
 
     private void defineEnemy()

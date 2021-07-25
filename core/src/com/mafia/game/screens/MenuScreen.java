@@ -28,17 +28,21 @@ public class MenuScreen implements Screen
     public OrthographicCamera camera;
     public FitViewport gamePort;
 
+    private PlayScreen playScreen;
 
-    public MenuScreen(Main main)
+    public boolean isActive;
+
+    public MenuScreen(Main main, PlayScreen playScreen)
     {
         this.main = main;
+        this.playScreen = playScreen;
         PlayActive = new Texture("menu/NewGameActive.png");
         ExitActive = new Texture("menu/ExitActive.png");
         PlayInActive = new Texture("menu/NewGameInActive.png");
         ExitInActive = new Texture("menu/ExitInActive.png");
         Menu = new Texture("menu/menu.png");
 
-
+        isActive = false;
         camera = new OrthographicCamera();
         gamePort = new FitViewport(1980, 1080, camera);
 
@@ -66,7 +70,10 @@ public class MenuScreen implements Screen
         {
             main.batch.draw(PlayActive, 1920 / 2 - PlayWidth / 2  , PlayY   );
             if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
-                main.setScreen(new PlayScreen(this.main));
+            {
+                main.setScreen(new Tutorial(playScreen, main));
+            }
+
         }
         else
         {
@@ -90,7 +97,7 @@ public class MenuScreen implements Screen
     @Override
     public void resize(int width, int height)
     {
-
+        gamePort.update(width, height);
     }
 
     @Override

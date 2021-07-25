@@ -11,13 +11,7 @@ public class GameContactListener implements ContactListener
     private boolean door_1_out = false;
 
     private boolean door_2 = false;
-    //private boolean door_1_out = false;
-
     private boolean door_3 = false;
-    //private boolean door_1_out = false;
-
-
-
 
     public boolean isEnemyMoveRight() {return  EnemyMoveRight;}
     public boolean isPlayerOnGround() {return playerOnGround;}
@@ -26,10 +20,7 @@ public class GameContactListener implements ContactListener
     public boolean isPlayerTouchDoor_1_out() { return  door_1_out;}
 
     public boolean isPlayerTouchDoor_2() { return  door_2;}
-    public boolean isPlayerTouchDoor_2_out() { return  door_1_out;}
-
     public boolean isPlayerTouchDoor_3() { return  door_3;}
-    public boolean isPlayerTouchDoor_3_out() { return  door_1_out;}
 
 
 
@@ -85,22 +76,22 @@ public class GameContactListener implements ContactListener
 
         if(fa.getUserData() != null && fb.getUserData() != null && fa.getUserData().equals("bullet") && fb.getUserData().equals("enemy"))
         {
+            fa.setUserData("delete_bullet");
             fb.setUserData("delete");
-            fa.setUserData("delete");
         }
         if(fa.getUserData() != null && fb.getUserData() != null && fb.getUserData().equals("bullet") && fa.getUserData().equals("enemy"))
         {
             fa.setUserData("delete");
-            fb.setUserData("delete");
+            fb.setUserData("delete_bullet");
         }
 
-        if(fb.getUserData() != null &&   fa.getUserData() != null && fa.getUserData().equals("bullet"))
+        if(fa.getUserData() != null &&   fa.getUserData() != null && fa.getUserData().equals("bullet"))
         {
-            fa.setUserData("delete");
+            fa.setUserData("delete_bullet");
         }
-        if(fa.getUserData() != null &&  fb.getUserData() != null && fb.getUserData().equals("bullet"))
+        if(fb.getUserData() != null &&  fb.getUserData() != null && fb.getUserData().equals("bullet"))
         {
-            fb.setUserData("delete");
+            fb.setUserData("delete_bullet");
         }
 
         if(fa.getUserData() != null && fa.getUserData().equals("enemy") && fb.getUserData() != null)

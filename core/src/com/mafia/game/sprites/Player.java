@@ -53,9 +53,7 @@ public class Player extends Sprite
         this.height = height;
         this.name = name;
         definePlayer();
-        //playerStand = new TextureRegion(getTexture(), 3, 68, 13,13);
         setBounds(0, 0, 20  , 24);
-        //setRegion((TextureRegion) playerStand.getKeyFrame(stateTimer, true));
     }
 
     public void update(float delta)
@@ -194,7 +192,7 @@ public class Player extends Sprite
         body = world.createBody(def);
         shape.setAsBox(width / 2 / Constants.pixelPerMeters, height / 2 / Constants.pixelPerMeters);
         body.createFixture(shape, 1.0f).setUserData(name);
-         shape.dispose();
+        shape.dispose();
     }
 
 }
