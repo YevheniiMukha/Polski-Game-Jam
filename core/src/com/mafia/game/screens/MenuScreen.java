@@ -44,9 +44,9 @@ public class MenuScreen implements Screen
 
         isActive = false;
         camera = new OrthographicCamera();
-        gamePort = new FitViewport(1980, 1080, camera);
+        gamePort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
 
-        camera.position.set(gamePort.getWorldHeight() / 2, gamePort.getWorldWidth() / 2 , 0);
+        camera.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2 , 0);
     }
     @Override
     public void show() {
@@ -64,6 +64,7 @@ public class MenuScreen implements Screen
         update(delta);
         ScreenUtils.clear(0, 0, 0, 1);
         main.batch.begin();
+        main.batch.setProjectionMatrix(camera.combined);
         main.batch.draw(Menu, 0, 0, 1920, 1080 );
         if(Gdx.input.getX() > 1920 / 2 - PlayWidth / 2 && 1080 - Gdx.input.getY() > PlayY + 25 &&
                 Gdx.input.getX() < 1920 / 2 + PlayWidth / 2 && 1080 - Gdx.input.getY() < PlayY + PlayHeight + 25 )
